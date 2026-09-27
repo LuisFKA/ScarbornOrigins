@@ -1,0 +1,46 @@
+using System.Collections.Generic;
+using UnityEngine;
+public class PoolManager : MonoBehaviour
+{
+    [Header("Pool Manager")]
+    public GameObject prefab;
+    public List<GameObject> pooledObjects;
+    public int amount = 20;
+    public bool lazyLoad = false;
+
+    private void Awake()
+    {
+        if (lazyLoad == false)
+        {
+            StartPool();
+        }
+    }
+
+    public void StartPool()
+    {
+        if (pooledObjects.Count != 0)
+        {
+            return;
+        }
+
+        pooledObjects = new List<GameObject>();
+        for (int i = 0; i < amount; i++)
+        {
+            var obj = Instantiate(prefab, transform);
+            obj.SetActive(false);
+            pooledObjects.Add(obj);
+        }
+    }
+
+    public GameObject GetPooledObject()
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            if (!pooledObjects[i].activeInHierarchy)
+            {
+                return pooledObjects[i];
+            }
+        }
+        return null;
+    }
+}
